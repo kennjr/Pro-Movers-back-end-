@@ -40,7 +40,7 @@ class Move(models.Model):
     mover = models.ForeignKey(User, on_delete=models.CASCADE, related_name='move')
     user =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='Move')
     scheduled_date = models.DateTimeField(auto_now_add=True)
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_at = models.DateField((u"Conversation Date"), blank=True)
 
     def __str__(self):
         return f'{self.user.username} Move'
