@@ -28,7 +28,7 @@ class User(AbstractBaseUser):
 class Email_msg(models.Model):
     email_key = models.IntegerField(null=True)
     to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sendingTo')
-    from1 = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='receivingFrom')
+    from1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receivingFrom')
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
