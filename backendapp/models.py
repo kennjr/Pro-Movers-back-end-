@@ -70,9 +70,7 @@ class Rating(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     punctuality = models.BooleanField(default=False)
     clumsy = models.BooleanField(default=False)
-    experience = models.IntegerField(null=True)
-    image = models.ImageField(upload_to='images/')
-    score = models.IntegerField(default=0,
+    experience = models.IntegerField(default=0,
         validators=[
             MaxValueValidator(5),
             MinValueValidator(0),
