@@ -5,19 +5,20 @@ from django.contrib.auth.models import AbstractBaseUser
 from psycopg2 import Timestamp
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 # Create your models here.
 
 class User(AbstractBaseUser):
-    full_name = models.CharField(max_length=200)
+    full_name = models.CharField(max_length=200,unique=True,null=True)
     email = models.EmailField(unique=True,null=True)
     bio = models.TextField(null=True,max_length=500)
     profile_img = models.ImageField(null=True, default='avatar.svg')
-    created_at = models.DateTimeField(auto_now_add=True)
-    username = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    username = models.CharField(max_length=50,null=True)
     phone = models.IntegerField(null=True, blank=True)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=100,null=True, blank=True)
     is_mover = models.BooleanField(default=False)
 
 
@@ -39,8 +40,8 @@ class Email_msg(models.Model):
 class Move(models.Model):
     mover = models.ForeignKey(User, on_delete=models.CASCADE, related_name='move')
     user =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='Move')
-    scheduled_date = models.DateTimeField(auto_now_add=True)
-    created_at = models.DateField((u"Conversation Date"), blank=True)
+    scheduled_date = models.DateField((u"Conversation Date"),auto_now_add=True, blank=True)
+    created_at = models.DateField((u"Conversation Date"),auto_now_add=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} Move'
@@ -63,6 +64,23 @@ class Move(models.Model):
     @classmethod
     def search_move(cls, name):
         return cls.objects.filter(user__username__icontains=name).all()
+
+class Rating(models.Model):
+    comment = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
+    punctuality = models.BooleanField(default=False)
+    clumsy = models.BooleanField(default=False)
+    experience = models.IntegerField(null=True)
+    image = models.ImageField(upload_to='images/')
+    score = models.IntegerField(default=0,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(0),
+        ]
+    )
+
+    def __str__(self):
+        return str(self.pk)
 
 
 
