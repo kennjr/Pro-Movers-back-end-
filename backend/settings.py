@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'backendapp.apps.BackendappConfig',
     'rest_framework'
 ]
 
@@ -45,6 +46,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication'
     ]
 }
+
+AUTH_USER_MODEL = 'backendapp.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
