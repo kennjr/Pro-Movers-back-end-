@@ -27,9 +27,9 @@ def register_user(request):
             # The email section
             subject = 'Welcome to ProMovers'
             if instance.is_mover:
-                message = f'Hi {instance.username}, thank you for registering in as a user on ProMovers.'
+                message = f"Hi {instance.username}, thank you for registering in as a mover on ProMovers. Where we will connect you to potential clients. Here's your authentication token {token}"
             else:
-                message = f'Hi {instance.username}, thank you for registering in as a mover on ProMovers. Where we will connect you to potential clients'
+                message = f"Hi {instance.username}, thank you for registering in as a user on ProMovers. Here's your authentication token {token}"
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [instance.email, ]
             send_mail(subject, message, email_from, recipient_list)

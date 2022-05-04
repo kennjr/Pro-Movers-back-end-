@@ -100,7 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'promovers_db',
         'USER': 'postgres',
-        'PASSWORD': 'password',
+        'PASSWORD': 'NewPA55w0rd123)(*',
         'HOST': 'localhost',
         'PORT': ''
     }
@@ -156,7 +156,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'promoversapp@gmail.com'
-EMAIL_HOST_PASSWORD = 'promovers123'
+EMAIL_HOST_PASSWORD = 'promoversapp123'
 
 
 # Default primary key field type
