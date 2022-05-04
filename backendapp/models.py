@@ -26,14 +26,14 @@ class MyMgr(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password):
+    def create_superuser(self, email, username, password=None):
         user = self.create_user(
             username,
             email,
-            password
         )
+        user.set_password(password)
         user.is_admin = True
-        user.is_Staff = False
+        user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
         return user
