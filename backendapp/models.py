@@ -87,4 +87,15 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class Request(models.Model):
     from_location = models.CharField(max_length=99, blank=False, null=False)
+    to_location = models.CharField(max_length=99, blank=False, null=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    mover = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    fees = models.IntegerField(default=5000, null=False, blank=False)
+    is_accepted = models.BooleanField(default=False)
+    inventory = models.CharField(null=False, blank=False, max_length=500)
+    moving_time = models.CharField(max_length=66, null=False, blank=False)
+
+
 
