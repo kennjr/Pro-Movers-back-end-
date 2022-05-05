@@ -90,8 +90,8 @@ class Request(models.Model):
     to_location = models.CharField(max_length=99, blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    mover = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user_id = models.IntegerField(blank=False, null=False)
+    mover_id = models.IntegerField(blank=False, null=False)
     fees = models.IntegerField(default=5000, null=False, blank=False)
     is_accepted = models.BooleanField(default=False)
     inventory = models.CharField(null=False, blank=False, max_length=500)
@@ -99,9 +99,11 @@ class Request(models.Model):
 
 
 class Move(models.Model):
-    request = models.ForeignKey(Request, on_delete=models.CASCADE, null=False)
+    request_id = models.IntegerField(blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    user_id = models.IntegerField(blank=False, null=False)
+    mover_id = models.IntegerField(blank=False, null=False)
 
 
 
