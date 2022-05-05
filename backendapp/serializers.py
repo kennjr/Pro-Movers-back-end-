@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from backendapp.models import User
+from backendapp.models import User, Request
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,3 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class RequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Request
+        fields = "__all__"

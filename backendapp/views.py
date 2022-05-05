@@ -9,8 +9,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import User
-from .serializers import UserSerializer
+from .models import User, Request
+from .serializers import UserSerializer, RequestSerializer
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -60,4 +60,38 @@ def api_specific_user(request, uid):
         return Response(serializer.data)
     except ObjectDoesNotExist:
         return Response({"response": "404"}, status=404)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def new_move_request(request):
+    serializer = RequestSerializer(data=request.data)
+    data = {}
+    if serializer.is_valid(raise_exception=True):
+        instance = serializer.create(validated_data=request.data)
+
+        if instance:
+
+            # The email section
+            # subject = 'New move request'
+            #
+            # message = f"Your move request from {instance.from_location} to {instance.to_location} has been made successfully. \nExpect a response from the mover"
+            # email_from = settings.EMAIL_HOST_USER
+            # recipient_list = [instance.email, ]
+            # send_mail(subject, message, email_from, recipient_list)
+
+            data['response'] = "Request made successfully"
+            return Response(data, status=200)
+        else:
+            data['response'] = "User registration, failed"
+            return Response(data, status=400)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def api_get_all_users_requests(request, uid):
+    users = Request.objects.filter(user_id=uid).all()
+
+    serializer = RequestSerializer(users, many=True)
+    return Response(serializer.data)
 
