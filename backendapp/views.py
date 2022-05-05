@@ -26,7 +26,7 @@ def register_user(request):
             token = Token.objects.get(user=instance).key
             # The email section
             subject = 'Welcome to ProMovers'
-            if instance.is_mover:
+            if instance.acc_type == "mover":
                 message = f"Hi {instance.username}, thank you for registering in as a mover on ProMovers. Where we will connect you to potential clients. Here's your authentication token {token}"
             else:
                 message = f"Hi {instance.username}, thank you for registering in as a user on ProMovers. Here's your authentication token {token}"
@@ -47,4 +47,13 @@ def api_get_all_users(request):
     users = User.objects.all()
 
     serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def api_specific_user(request, uid):
+    users = User.objects.get(id=uid)
+
+    serializer = UserSerializer(users, many=False)
     return Response(serializer.data)
