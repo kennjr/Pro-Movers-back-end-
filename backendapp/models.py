@@ -5,7 +5,8 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import BaseUserManager, PermissionsMixin
+
 
 # Create your models here.
 # https://app.getpostman.com/join-team?invite_code=f7cb4d2aa2b3e7e6587102b6766518f9
@@ -14,14 +15,14 @@ from django.contrib.auth.models import BaseUserManager
 class MyMgr(BaseUserManager):
 
     def create_user(self, email, username, password=None):
-        if not email:
-            raise ValueError("Users must have an email address")
-
         user = self.model(
-            username=username,
-            email=email
+            email=username,
+            username=email,
+            password=password
         )
-
+        user.is_admin = False
+        user.is_staff = False
+        user.is_superuser = False
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -57,24 +58,33 @@ class MyMgr(BaseUserManager):
         return True
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     objects = MyMgr()
 
-    full_name = models.CharField(max_length=200, unique=False, null=False)
-    email = models.EmailField(unique=True, null=False, db_index=True)
+    full_name = models.CharField(max_length=200, unique=False, null=True, blank=True)
+    email = models.EmailField(verbose_name='email', unique=True, null=False, db_index=True)
     bio = models.TextField(null=True, max_length=500)
     # profile_img = models.ImageField(null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=False)
-    username = models.CharField(max_length=50, null=False)
+    username = models.CharField(max_length=50, null=False, blank=False)
     phone = models.CharField(null=True, blank=True, max_length=22)
     location = models.CharField(max_length=100, null=True, blank=True)
-    is_mover = models.BooleanField(default=False)
+    acc_type = models.CharField(max_length=7, default="user", null=False, blank=False)
+
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+class Request(models.Model):
+    from_location = models.CharField(max_length=99, blank=False, null=False)
+
