@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 # https://api-promovers.herokuapp.com/
 # usertwo@users.com token: aa25ca8f13c18c5ef66607558c4554ee3ec8813f
@@ -20,7 +21,7 @@ def register_user(request):
     serializer = UserSerializer(data=request.data)
     data = {}
     if serializer.is_valid(raise_exception=True):
-        instance = serializer.save()
+        instance = serializer.create(validated_data=request.data)
 
         if instance:
             token = Token.objects.get(user=instance).key
@@ -53,7 +54,10 @@ def api_get_all_users(request):
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def api_specific_user(request, uid):
-    users = User.objects.get(id=uid)
+    try:
+        users = User.objects.get(id=uid)
+        serializer = UserSerializer(users, many=False)
+        return Response(serializer.data)
+    except ObjectDoesNotExist:
+        return Response({"response": "404"}, status=404)
 
-    serializer = UserSerializer(users, many=False)
-    return Response(serializer.data)
