@@ -98,4 +98,11 @@ class Request(models.Model):
     moving_time = models.CharField(max_length=66, null=False, blank=False)
 
 
+class Move(models.Model):
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, null=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+
+
 
