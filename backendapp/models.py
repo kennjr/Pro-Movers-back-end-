@@ -86,8 +86,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 class Request(models.Model):
-    from_location = models.CharField(max_length=99, blank=False, null=False)
-    to_location = models.CharField(max_length=99, blank=False, null=False)
+    current_location = models.CharField(max_length=99, blank=False, null=False)
+    new_location = models.CharField(max_length=99, blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     user_id = models.IntegerField(blank=False, null=False)
@@ -98,6 +98,7 @@ class Request(models.Model):
     is_declined = models.BooleanField(default=False,null=True,blank=True)
     inventory = models.CharField(null=False, blank=False, max_length=500)
     moving_time = models.CharField(max_length=66, null=False, blank=False)
+    description = models.CharField(max_length=500, null=False, blank=False)
 
 
 class Statistic(models.Model):
