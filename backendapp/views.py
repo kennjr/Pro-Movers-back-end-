@@ -21,6 +21,7 @@ def register_user(request):
     serializer = UserSerializer(data=request.data)
     data = {}
     if serializer.is_valid(raise_exception=True):
+
         instance = serializer.create(validated_data=request.data)
 
         if instance:
@@ -36,6 +37,7 @@ def register_user(request):
             send_mail(subject, message, email_from, recipient_list)
 
             data['token'] = token
+            data['user_id'] = instance.id
             data['response'] = "User registration, successful"
         else:
             data['response'] = "User registration, failed"
@@ -45,7 +47,7 @@ def register_user(request):
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def api_get_all_users(request):
-    users = User.objects.all()
+    users = User.objects.filter(acc_type="user").all()
 
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
