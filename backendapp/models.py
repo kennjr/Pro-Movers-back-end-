@@ -13,31 +13,68 @@ from django.contrib.auth.models import BaseUserManager, PermissionsMixin
 
 
 class MyMgr(BaseUserManager):
+    def create_user(self, email, password=None, is_admin=False, is_staff=False, is_active=True):
+        if not email:
+            raise ValueError("User must have an email")
+        if not password:
+            raise ValueError("User must have a password")
+        
 
-    def create_user(self, email, username, password=None):
         user = self.model(
-            email=username,
-            username=email,
-            password=password
+            email=self.normalize_email(email)
         )
-        user.is_admin = False
-        user.is_staff = False
-        user.is_superuser = False
+        # user.full_name = full_name
+        user.set_password(password)  # change password to hash
+        # user.profile_picture = profile_picture
+        user.admin = is_admin
+        user.staff = is_staff
+        user.active = is_active
+        user.save(using=self._db)
+        return user
+        
+    def create_superuser(self, email,password=None, **extra_fields):
+        if not email:
+            raise ValueError("User must have an email")
+        if not password:
+            raise ValueError("User must have a password")
+        
+
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        # user.full_name = full_name
         user.set_password(password)
+        # user.profile_picture = profile_picture
+        user.admin = True
+        user.staff = True
+        user.active = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password=None):
-        user = self.create_user(
-            username,
-            email,
-        )
-        user.set_password(password)
-        user.is_admin = True
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
+    # def create_user(self, email, username, password=None):
+    #     user = self.model(
+    #         email=username,
+    #         username=email,
+    #         password=password
+    #     )
+    #     user.is_admin = False
+    #     user.is_staff = False
+    #     user.is_superuser = False
+    #     user.set_password(password)
+    #     user.save(using=self._db)
+    #     return user
+
+    # def create_superuser(self, email, username, password=None):
+    #     user = self.create_superuser(
+    #         username,
+    #         email,
+    #     )
+    #     user.set_password(password)
+    #     user.is_admin = True
+    #     user.is_staff = True
+    #     user.is_superuser = True
+    #     user.save(using=self._db)
+    #     return user
 
     def get_by_natural_key(self, email_):
         return self.get(email=email_)
@@ -79,10 +116,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)
 
 
 class Request(models.Model):
@@ -104,7 +141,6 @@ class Move(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     user_id = models.IntegerField(blank=False, null=False)
     mover_id = models.IntegerField(blank=False, null=False)
-
 
 
 
