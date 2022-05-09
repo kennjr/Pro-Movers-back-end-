@@ -48,9 +48,9 @@ def register_user(request):
             # The email section
             subject = 'Welcome to ProMovers'
             if acc_type == "mover":
-                message = f"Hi {instance.username}, thank you for registering in as a mover on ProMovers. Where we will connect you to potential clients. Here's your authentication token {token}"
+                message = f"Hi {instance.username}, thank you for registering in as a mover on ProMovers. Where we will connect you to potential clients."
             else:
-                message = f"Hi {instance.username}, thank you for registering in as a user on ProMovers. Here's your authentication token {token}"
+                message = f"Hi {instance.username}, thank you for registering in as a user on ProMovers."
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [instance.email, ]
             send_mail(subject, message, email_from, recipient_list)
@@ -58,9 +58,11 @@ def register_user(request):
             # data['token'] = token
             data['user_id'] = instance.id
             data['response'] = "User registration, successful"
+
+            return Response(data, status=200)
         else:
             data['response'] = "User registration, failed"
-        return Response(data)
+            return Response(data, status=400)
 
 
 @api_view(['GET'])
