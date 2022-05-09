@@ -21,14 +21,14 @@ def register_user(request):
     serializer = UserSerializer(data=request.data)
     data = {}
     if serializer.is_valid(raise_exception=True):
-
+        acc_type = request.data['acc_type']
         instance = serializer.create(validated_data=request.data)
 
         if instance:
             token = Token.objects.get(user=instance).key
             # The email section
             subject = 'Welcome to ProMovers'
-            if instance.acc_type == "mover":
+            if acc_type == "mover":
                 message = f"Hi {instance.username}, thank you for registering in as a mover on ProMovers. Where we will connect you to potential clients. Here's your authentication token {token}"
             else:
                 message = f"Hi {instance.username}, thank you for registering in as a user on ProMovers. Here's your authentication token {token}"

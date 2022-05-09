@@ -29,8 +29,8 @@ class MyMgr(BaseUserManager):
 
     def create_superuser(self, email, username, password=None):
         user = self.create_user(
-            username,
-            email,
+            email=email,
+            username=username
         )
         user.set_password(password)
         user.is_admin = True
@@ -71,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
 
 class Mover(models.Model):

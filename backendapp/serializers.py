@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from backendapp.models import User, Request
+from backendapp.models import User, Request, Mover, RegUser
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,6 +15,20 @@ class UserSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
+        acc_type = validated_data['acc_type']
+        if acc_type == 'mover':
+            mover = Mover(
+                user=user,
+                company_name=validated_data['name']
+            )
+            mover.save()
+        else:
+            reguser = RegUser(
+                user=user,
+                full_name=validated_data['name']
+            )
+            reguser.save()
+        # user.update({"acc_type": acc_type})
         return user
 
 
