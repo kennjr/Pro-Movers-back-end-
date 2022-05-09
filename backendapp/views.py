@@ -8,12 +8,31 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User, Request
 from .serializers import UserSerializer, RequestSerializer
 
 from django.conf import settings
 from django.core.mail import send_mail
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Add custom claims
+        token['email'] = user.email
+        token['username'] = user.username
+
+        return token
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['POST'])
@@ -25,7 +44,7 @@ def register_user(request):
         instance = serializer.create(validated_data=request.data)
 
         if instance:
-            token = Token.objects.get(user=instance).key
+            # token = Token.objects.get(user=instance).key
             # The email section
             subject = 'Welcome to ProMovers'
             if acc_type == "mover":
@@ -36,7 +55,7 @@ def register_user(request):
             recipient_list = [instance.email, ]
             send_mail(subject, message, email_from, recipient_list)
 
-            data['token'] = token
+            # data['token'] = token
             data['user_id'] = instance.id
             data['response'] = "User registration, successful"
         else:
