@@ -106,6 +106,7 @@ class Request(models.Model):
     user = models.ForeignKey(RegUser, on_delete=models.CASCADE, blank=False, null=False)
     mover = models.ForeignKey(Mover, on_delete=models.CASCADE, blank=False, null=False)
     fees = models.IntegerField(default=5000, null=False, blank=False)
+    package = models.CharField(max_length=400, null=True)
     is_accepted = models.BooleanField(null=True)
     is_pending = models.BooleanField(null=True)
     is_declined = models.BooleanField(null=True)
