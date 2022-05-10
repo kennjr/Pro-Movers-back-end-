@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         if acc_type == 'mover':
             mover = Mover(
                 user=user,
-                company_name=validated_data['name']
+                name=validated_data['name']
             )
             mover.save()
         else:

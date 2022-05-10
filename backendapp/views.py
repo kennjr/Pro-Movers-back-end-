@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.schemas import AutoSchema
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User, Request, RegUser, Mover
@@ -12,10 +13,23 @@ from .serializers import UserSerializer, RequestSerializer, RegUserSerializer, M
 
 from django.conf import settings
 from django.core.mail import send_mail
+import coreapi
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
+
+
+# This class is for the documentation of the api
+class ProMoversApiSchema(AutoSchema):
+    def get_manual_fields(self, path, method):
+        extra_fields = []
+        if method.lower() in ["put", "post"]:
+            extra_fields = [
+                coreapi.Field(name="bio", required=False)
+            ]
+        manual_fields = super().get_manual_fields(path, method)
+        return manual_fields + extra_fields
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -64,41 +78,34 @@ def register_user(request):
 
 
 @api_view(['PUT'])
-def api_update_user_profile(request):
+def api_update_user_profile(request, username):
     user_id = request.data['user']
-    if user_id:
-        user = RegUser.get_user_user_by_id(user_id)
-        if user:
-            serializer = RegUserSerializer(user, request.data, partial=True)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                data = {"message": "Update was successful"}
-                return Response(data, status=200)
-        else:
-            data = {"message": "User doesn't exist"}
-            return Response(data, status=404)
+    user = RegUser.get_user_by_username(username)
+    if user:
+        serializer = RegUserSerializer(user, request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            data = {"message": "Update was successful", "user": user_id}
+            return Response(data, status=200)
     else:
-        data = {"message": "Invalid user"}
-        return Response(data, status=400)
+        data = {"message": "User doesn't exist"}
+        return Response(data, status=404)
 
 
 @api_view(['PUT'])
-def api_update_mover_profile(request):
+def api_update_mover_profile(request, username):
     user_id = request.data['user']
-    if user_id:
-        mover = Mover.get_mover_user_by_id(user_id)
-        if mover:
-            serializer = MoverSerializer(mover, request.data, partial=True)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                data = {"message": "Update was successful"}
-                return Response(data, status=200)
-        else:
-            data = {"message": "Mover doesn't exist"}
-            return Response(data, status=404)
+    mover = Mover.get_mover_by_username(username)
+    if mover:
+        data = request.data.pop("user")
+        serializer = MoverSerializer(mover, data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            data = {"message": "Update was successful"}
+            return Response(data, status=200)
     else:
-        data = {"message": "Invalid user"}
-        return Response(data, status=400)
+        data = {"message": "Mover doesn't exist", "user": user_id}
+        return Response(data, status=404)
 
 
 @api_view(['GET'])
@@ -106,6 +113,10 @@ def api_update_mover_profile(request):
 def api_get_all_users(request):
     users = RegUser.objects.all()
     serializer = RegUserSerializer(users, many=True)
+    # try:
+    #     print(f"The current user is {request.user}")
+    # except:
+    #     print("The except clause ran")
     return Response(serializer.data)
 
 

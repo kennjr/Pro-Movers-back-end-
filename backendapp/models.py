@@ -82,6 +82,14 @@ class Mover(models.Model):
     name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # image = models.ImageField(null=True)
 
+    @classmethod
+    def get_mover_by_username(cls, username):
+        return cls.objects.filter(user__username=username).first()
+
+    @classmethod
+    def get_mover_user_by_id(cls, user_id):
+        return cls.objects.filter(user__id=user_id).first()
+
 
 class RegUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -92,8 +100,12 @@ class RegUser(models.Model):
     # profile_img = models.ImageField(null=True)
 
     @classmethod
-    def get_user_by_id(cls, user_id):
-        return cls.objects.filter(id=user_id).all()
+    def get_user_by_username(cls, username):
+        return cls.objects.filter(user__username=username).first()
+
+    @classmethod
+    def get_user_user_by_id(cls, user_id):
+        return cls.objects.filter(user__id=user_id).first()
 
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
