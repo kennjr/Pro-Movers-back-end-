@@ -42,3 +42,9 @@ class RegUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegUser
         fields = "__all__"
+
+
+class MoverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mover
+        fields = '__all__'
