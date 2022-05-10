@@ -61,15 +61,10 @@ class MyMgr(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     objects = MyMgr()
 
-    full_name = models.CharField(max_length=200, unique=False, null=True, blank=True)
     email = models.EmailField(verbose_name='email', unique=True, null=False, db_index=True)
-    bio = models.TextField(null=True, max_length=500)
-    # profile_img = models.ImageField(null=True)
+
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     username = models.CharField(max_length=50, null=False, blank=False)
-    phone = models.CharField(null=True, blank=True, max_length=22)
-    location = models.CharField(max_length=100, null=True, blank=True)
-    acc_type = models.CharField(max_length=7, default="user", null=False, blank=False)
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -79,6 +74,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
 
+class Mover(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(null=True, blank=True, max_length=22)
+    location = models.CharField(max_length=100, null=True, blank=True)
+    bio = models.TextField(null=True, max_length=500)
+    company_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
+    # profile_img = models.ImageField(null=True)
+
+
+class RegUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(null=True, blank=True, max_length=22)
+    location = models.CharField(max_length=100, null=True, blank=True)
+    bio = models.TextField(null=True, max_length=500)
+    full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
+    # profile_img = models.ImageField(null=True)
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
@@ -86,27 +99,23 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 class Request(models.Model):
-    current_location = models.CharField(max_length=99, blank=False, null=False)
-    new_location = models.CharField(max_length=99, blank=False, null=False)
+    from_location = models.CharField(max_length=99, blank=False, null=False)
+    to_location = models.CharField(max_length=99, blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    user_id = models.IntegerField(blank=False, null=False)
-    mover_id = models.IntegerField(blank=False, null=False)
+    user = models.ForeignKey(RegUser, on_delete=models.CASCADE, blank=False, null=False)
+    mover = models.ForeignKey(Mover, on_delete=models.CASCADE, blank=False, null=False)
     fees = models.IntegerField(default=5000, null=False, blank=False)
-    is_accepted = models.BooleanField(default=False,null=True,blank=True)
-    is_pending = models.BooleanField(default=False,null=True,blank=True)
-    is_declined = models.BooleanField(default=False,null=True,blank=True)
-    inventory = models.CharField(null=False, blank=False, max_length=500)
+    is_accepted = models.BooleanField(null=True)
+    is_pending = models.BooleanField(null=True)
+    is_declined = models.BooleanField(null=True)
+    description = models.CharField(null=False, blank=False, max_length=500)
+
     moving_time = models.CharField(max_length=66, null=False, blank=False)
-    description = models.CharField(max_length=500, null=False, blank=False)
 
 
-class Statistic(models.Model):
-    years_of_experience = models.IntegerField(blank=False, null=False)
-    no_of_movers = models.IntegerField(blank=False,null=False)
-    happy_clients = models.IntegerField(blank=False, null=False)
-    no_of_clients = models.IntegerField(blank=False, null=False)
-
-    
-
-
+class Rating(models.Model):
+    comment = models.TextField(null=False)
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, blank=False, null=False)
+    created = models.DateTimeField(auto_now_add=True)
+    experience = models.IntegerField(null=False, blank=False)
