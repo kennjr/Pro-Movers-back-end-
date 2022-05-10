@@ -52,7 +52,7 @@ def register_user(request):
                 message = f"Hi {instance.username}, thank you for registering in as a user on ProMovers."
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [instance.email, ]
-            # send_mail(subject, message, email_from, recipient_list)
+            send_mail(subject, message, email_from, recipient_list)
 
             # data['token'] = token
             data['user_id'] = instance.id
