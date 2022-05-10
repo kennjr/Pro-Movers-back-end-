@@ -78,9 +78,9 @@ class Mover(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(null=True, blank=True, max_length=22)
     location = models.CharField(max_length=100, null=True, blank=True)
-    bio = models.TextField(null=True, max_length=500)
-    company_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
-    # profile_img = models.ImageField(null=True)
+    description = models.TextField(null=True, max_length=500)
+    name = models.CharField(max_length=100, unique=False, null=True, blank=True)
+    # image = models.ImageField(null=True)
 
 
 class RegUser(models.Model):
@@ -91,6 +91,9 @@ class RegUser(models.Model):
     full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # profile_img = models.ImageField(null=True)
 
+    @classmethod
+    def get_user_by_id(cls, user_id):
+        return cls.objects.filter(id=user_id).all()
 
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -99,20 +102,20 @@ class RegUser(models.Model):
 
 
 class Request(models.Model):
-    from_location = models.CharField(max_length=99, blank=False, null=False)
-    to_location = models.CharField(max_length=99, blank=False, null=False)
+    currentLocation = models.CharField(max_length=99, blank=False, null=False)
+    newLocation = models.CharField(max_length=99, blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(RegUser, on_delete=models.CASCADE, blank=False, null=False)
     mover = models.ForeignKey(Mover, on_delete=models.CASCADE, blank=False, null=False)
-    fees = models.IntegerField(default=5000, null=False, blank=False)
-    package = models.CharField(max_length=400, null=True)
+    fees = models.IntegerField(default=5000, null=True, blank=False)
+    Package = models.CharField(max_length=400, null=True)
     is_accepted = models.BooleanField(null=True)
     is_pending = models.BooleanField(null=True)
     is_declined = models.BooleanField(null=True)
-    description = models.CharField(null=False, blank=False, max_length=500)
+    packageDescription = models.CharField(null=False, blank=False, max_length=500)
 
-    moving_time = models.CharField(max_length=66, null=False, blank=False)
+    movingDate = models.CharField(max_length=66, null=False, blank=False)
 
 
 class Rating(models.Model):
