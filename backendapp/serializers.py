@@ -42,9 +42,11 @@ class RegUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegUser
         fields = "__all__"
+        read_only_fields = ['user']
 
 
 class MoverSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mover
         fields = '__all__'
+        read_only_fields = ['user']

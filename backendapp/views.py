@@ -65,9 +65,17 @@ def register_user(request):
 
 @api_view(['PUT'])
 def update_user_profile(request):
-    serializer = UserSerializer(data=request.data)
-    data = {}
-    return Response(data, status=200)
+    user_id = request.data['user']
+    if user_id:
+        user = RegUser.get_user_by_id(user_id)
+        serializer = RegUserSerializer(user, request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            data = {"message": "Update was successful"}
+            return Response(data, status=200)
+    else:
+        data = {"message": "Invalid user"}
+        return Response(data, status=404)
 
 
 @api_view(['GET'])
