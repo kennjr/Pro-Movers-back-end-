@@ -64,18 +64,41 @@ def register_user(request):
 
 
 @api_view(['PUT'])
-def update_user_profile(request):
+def api_update_user_profile(request):
     user_id = request.data['user']
     if user_id:
-        user = RegUser.get_user_by_id(user_id)
-        serializer = RegUserSerializer(user, request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            data = {"message": "Update was successful"}
-            return Response(data, status=200)
+        user = RegUser.get_user_user_by_id(user_id)
+        if user:
+            serializer = RegUserSerializer(user, request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                data = {"message": "Update was successful"}
+                return Response(data, status=200)
+        else:
+            data = {"message": "User doesn't exist"}
+            return Response(data, status=404)
     else:
         data = {"message": "Invalid user"}
-        return Response(data, status=404)
+        return Response(data, status=400)
+
+
+@api_view(['PUT'])
+def api_update_mover_profile(request):
+    user_id = request.data['user']
+    if user_id:
+        mover = Mover.get_mover_user_by_id(user_id)
+        if mover:
+            serializer = MoverSerializer(mover, request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                data = {"message": "Update was successful"}
+                return Response(data, status=200)
+        else:
+            data = {"message": "Mover doesn't exist"}
+            return Response(data, status=404)
+    else:
+        data = {"message": "Invalid user"}
+        return Response(data, status=400)
 
 
 @api_view(['GET'])
@@ -96,9 +119,20 @@ def api_get_all_movers(request):
 
 @api_view(['GET'])
 # @permission_classes((IsAuthenticated,))
-def api_specific_user(request, username):
+def api_get_specific_user(request, username):
     try:
         users = RegUser.objects.get(user__username=username)
+        serializer = RegUserSerializer(users, many=False)
+        return Response(serializer.data, status=200)
+    except ObjectDoesNotExist:
+        return Response({"response": "404"}, status=404)
+
+
+@api_view(['GET'])
+# @permission_classes((IsAuthenticated,))
+def api_get_specific_mover(request, username):
+    try:
+        users = Mover.objects.get(user__username=username)
         serializer = RegUserSerializer(users, many=False)
         return Response(serializer.data, status=200)
     except ObjectDoesNotExist:
