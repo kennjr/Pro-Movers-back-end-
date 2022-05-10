@@ -36,3 +36,9 @@ class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = "__all__"
+
+
+class RegUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegUser
+        fields = "__all__"
