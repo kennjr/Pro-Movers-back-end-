@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import User, Request, RegUser
-from .serializers import UserSerializer, RequestSerializer, RegUserSerializer
+from .models import User, Request, RegUser, Mover
+from .serializers import UserSerializer, RequestSerializer, RegUserSerializer, MoverSerializer
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -63,11 +63,26 @@ def register_user(request):
             return Response(data, status=400)
 
 
+@api_view(['PUT'])
+def update_user_profile(request):
+    serializer = UserSerializer(data=request.data)
+    data = {}
+    return Response(data, status=200)
+
+
 @api_view(['GET'])
 # @permission_classes((IsAuthenticated,))
 def api_get_all_users(request):
     users = RegUser.objects.all()
     serializer = RegUserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+# @permission_classes((IsAuthenticated,))
+def api_get_all_movers(request):
+    movers = Mover.objects.all()
+    serializer = MoverSerializer(movers, many=True)
     return Response(serializer.data)
 
 
