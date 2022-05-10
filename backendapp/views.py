@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User, Request, RegUser
@@ -15,7 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-    TokenRefreshView,
+    TokenRefreshView
 )
 
 
