@@ -37,6 +37,19 @@ class RequestSerializer(serializers.ModelSerializer):
         model = Request
         fields = "__all__"
 
+    def create(self, validated_data):
+        request = Request(
+            currentLocation=validated_data['currentLocation'],
+            newLocation=validated_data['newLocation'],
+            user=validated_data['user'],
+            mover=validated_data['mover'],
+            Package=validated_data["Package"],
+            packageDescription=validated_data["packageDescription"],
+            movingDate=validated_data['movingDate']
+        )
+        request.save()
+        return request
+
 
 class RegUserSerializer(serializers.ModelSerializer):
     class Meta:

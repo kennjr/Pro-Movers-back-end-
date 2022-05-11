@@ -153,17 +153,32 @@ def api_get_specific_mover(request, username):
 @api_view(['POST'])
 # @permission_classes((IsAuthenticated,))
 def new_move_request(request):
-    serializer = RequestSerializer(data=request.data)
-    data = {}
-    if serializer.is_valid(raise_exception=True):
-        instance = serializer.create(validated_data=request.data)
+    initial_data = request.data
+    user_id = initial_data['user']
+    mover_id = initial_data['mover']
 
+    # get the mover and user form the backend
+    user = RegUser.get_reg_user_by_id(user_id)
+    mover = Mover.get_mover_by_id(mover_id)
+    print(f'The user {user}, the mover {mover}')
+    if user and mover:
+        initial_data.pop("user")
+        initial_data.pop("mover")
+        # update the dict
+        initial_data.update({"mover": mover, "user": user})
+        serializer = RequestSerializer(data=initial_data)
+        instance = serializer.create(validated_data=initial_data)
+
+        data = {}
         if instance:
-            data['response'] = "Request created successfully"
-            return Response(data, status=200)
+            data['message'] = "Request created successfully"
+            return Response(data, status=201)
         else:
-            data['response'] = "User registration, failed"
+            data['message'] = "Request creation failed"
             return Response(data, status=400)
+
+    else:
+        return Response({"message": "The user and mover obj.s couldn't be retrieved"}, status=404)
 
 
 @api_view(['GET'])

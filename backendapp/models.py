@@ -1,10 +1,10 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
-from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
+# from django.conf import settings
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
+# from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import BaseUserManager, PermissionsMixin
 
 
@@ -93,6 +93,10 @@ class Mover(models.Model):
     def get_mover_user_by_id(cls, user_id):
         return cls.objects.filter(user__id=user_id).first()
 
+    @classmethod
+    def get_mover_by_id(cls, mover_id):
+        return cls.objects.filter(id=mover_id).first()
+
 
 class RegUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -112,6 +116,10 @@ class RegUser(models.Model):
     @classmethod
     def get_user_user_by_id(cls, user_id):
         return cls.objects.filter(user__id=user_id).first()
+
+    @classmethod
+    def get_reg_user_by_id(cls, user_id):
+        return cls.objects.filter(id=user_id).first()
 
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
