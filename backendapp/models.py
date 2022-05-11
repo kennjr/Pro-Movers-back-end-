@@ -95,6 +95,7 @@ class Mover(models.Model):
     def get_mover_user_by_id(cls, user_id):
         return cls.objects.filter(user__id=user_id).first()
 
+    # Will get the mover by the model that's been passed
     @classmethod
     def get_mover_by_id(cls, mover_id):
         return cls.objects.filter(id=mover_id).first()
