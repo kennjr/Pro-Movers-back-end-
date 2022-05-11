@@ -79,6 +79,8 @@ class Mover(models.Model):
     phone = models.CharField(null=True, blank=True, max_length=22)
     location = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, max_length=500)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # image = models.ImageField(null=True)
 
@@ -103,6 +105,8 @@ class RegUser(models.Model):
     phone = models.CharField(null=True, blank=True, max_length=22)
     location = models.CharField(max_length=100, null=True, blank=True)
     bio = models.TextField(null=True, max_length=500)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # profile_img = models.ImageField(null=True)
 
