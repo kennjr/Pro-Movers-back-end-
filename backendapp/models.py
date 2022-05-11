@@ -82,6 +82,9 @@ class Mover(models.Model):
     name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # image = models.ImageField(null=True)
 
+    def __str__(self):
+        return f'{self.user.username}'
+
     @classmethod
     def get_mover_by_username(cls, username):
         return cls.objects.filter(user__username=username).first()
@@ -98,6 +101,9 @@ class RegUser(models.Model):
     bio = models.TextField(null=True, max_length=500)
     full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # profile_img = models.ImageField(null=True)
+
+    def __str__(self):
+        return f'{self.user.username}'
 
     @classmethod
     def get_user_by_username(cls, username):
@@ -129,11 +135,17 @@ class Request(models.Model):
 
     movingDate = models.CharField(max_length=66, null=False, blank=False)
 
+    def __str__(self):
+        return f'from {self.currentLocation} to {self.newLocation}'
+
 
 class Rating(models.Model):
     comment = models.TextField(null=False)
     request = models.ForeignKey(Request, on_delete=models.CASCADE, blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
     experience = models.IntegerField(null=False, blank=False)
+
+    def __str__(self):
+        return f'from {self.request.currentLocation} to {self.request.newLocation}'
 
 
