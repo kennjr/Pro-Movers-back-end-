@@ -126,16 +126,28 @@ class RegUser(models.Model):
         return f'{self.user.username}'
 
     @classmethod
-    def get_user_by_username(cls, username):
+    def get_reg_user_by_username(cls, username):
         return cls.objects.filter(user__username=username).first()
 
     @classmethod
-    def get_user_user_by_id(cls, user_id):
+    def get_reg_user_user_by_id(cls, user_id):
         return cls.objects.filter(user__id=user_id).first()
 
     @classmethod
     def get_reg_user_by_id(cls, user_id):
         return cls.objects.filter(id=user_id).first()
+
+    def save_reg_user(self):
+        return self.save()
+
+    @classmethod
+    def get_all_reg_users(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def delete_reg_user(cls, uid):
+        return cls.objects.filter(id=uid).delete()
+
 
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
