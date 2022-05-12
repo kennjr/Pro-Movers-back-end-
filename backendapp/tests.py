@@ -10,7 +10,7 @@ django.setup()
 from backendapp.models import RegUser, Mover, Request, Rating, User
 
 
-class ProfileTestsClass(TestCase):
+class MoverTestsClass(TestCase):
     # set up method
     def setUp(self):
 
@@ -59,4 +59,56 @@ class ProfileTestsClass(TestCase):
         self.test_mover.save_mover()
 
         req_result = Mover.get_mover_user_by_id(self.test_user.id)
+        self.assertTrue(req_result is not None)
+
+
+class RegUserTestsClass(TestCase):
+    # set up method
+    def setUp(self):
+
+        # creating a new category
+        self.test_user = User.objects.create(username='thereguser', password="12345", email="reguser@users.com")
+
+        self.test_reg_user = RegUser(user=self.test_user, phone='123456', full_name="The user",
+                                     bio="test_locaction", location="A gen location")
+
+    # testing instance
+    def test_instance(self):
+        reg_user = self.test_reg_user
+        self.assertEqual(self.test_reg_user, reg_user)
+
+    # testing save method
+    def test_save_RegUser_method(self):
+        original_len = RegUser.get_all_reg_users()
+        print(f'original len {len(original_len)}')
+        self.test_reg_user.save_reg_user()
+
+        new_len = RegUser.get_all_reg_users()
+        print(f'new len {len(new_len)}')
+        self.assertTrue(len(new_len) > len(original_len))
+
+    def test_delete_RegUser_method(self):
+        self.test_reg_user.save_reg_user()
+        original_len = RegUser.objects.all()
+        print(f'the categorys are{len(original_len)}')
+        RegUser.delete_reg_user(self.test_reg_user.id)
+        new_len = RegUser.objects.all()
+        print(f'the categorys are{len(new_len)}')
+        self.assertTrue((len(new_len)) == (len(original_len) - 1))
+
+    def test_get_RegUser_by_id_method(self):
+        self.test_reg_user.save_reg_user()
+        req_result = RegUser.get_reg_user_by_id(self.test_reg_user.id)
+        self.assertTrue(req_result is not None)
+
+    def test_get_RegUser_by_auth_username(self):
+        self.test_reg_user.save_reg_user()
+
+        req_result = RegUser.get_reg_user_by_username("thereguser")
+        self.assertTrue(req_result is not None)
+
+    def test_get_RegUser_by_user_user_id(self):
+        self.test_reg_user.save_reg_user()
+
+        req_result = RegUser.get_reg_user_user_by_id(self.test_user.id)
         self.assertTrue(req_result is not None)
