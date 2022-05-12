@@ -87,6 +87,9 @@ class Mover(models.Model):
     def __str__(self):
         return f'{self.user.username}'
 
+    def save_mover(self):
+        return self.save()
+
     @classmethod
     def get_mover_by_username(cls, username):
         return cls.objects.filter(user__username=username).first()
@@ -94,6 +97,14 @@ class Mover(models.Model):
     @classmethod
     def get_mover_user_by_id(cls, user_id):
         return cls.objects.filter(user__id=user_id).first()
+
+    @classmethod
+    def get_all_movers(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def delete_mover(cls, uid):
+        return cls.objects.filter(id=uid).delete()
 
     # Will get the mover by the model that's been passed
     @classmethod
